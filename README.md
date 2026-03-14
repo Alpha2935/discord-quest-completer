@@ -1,22 +1,37 @@
-# Complete Discord Quests Automatically
+<div align="center">
+  <h1>🎮 Discord Quest Completer</h1>
+  <p><strong>Automatically complete Discord quests seamlessly in the background!</strong></p>
+</div>
 
-> [!NOTE]
-> This does not work in browser for quests which require you to play a game! Use the [desktop app](https://discord.com/download) to complete those.
+---
 
-> [!TIP]
-> Unlike the [original script](https://gist.github.com/aamiaa/204cd9d42013ded9faf646fae7f89fbb), this version uses **dynamic module resolution** — it won't break when Discord updates their webpack export keys.
+### ✨ Features
+- **🚀 Concurrent Questing**: Accept multiple quests at the same time, and this script will complete them **all at once** in the background!
+- **🛡️ Undetected & Safe**: Mimics realistic client behavior directly from within your client. 
+- **⚡ Auto-Resolution**: Automatically finds the necessary internal Discord modules, immune to property key updates.
+- **💻 Desktop App Native**: Fully works within the standalone Discord Desktop app!
 
-## How to use this script:
+---
 
-1. Accept a quest under the **Quests** tab (you can accept multiple quests at the same time and the script will automatically complete them all concurrently!)
-2. Press `Ctrl+Shift+I` to open DevTools
-3. Go to the **Console** tab
-4. Paste the following code and hit enter:
+> [!NOTE]  
+> This script is designed for the **[Discord Desktop App](https://discord.com/download)**. It relies on internal stores that are unavailable in the browser version for game-related quests.
+
+> [!TIP]  
+> Remember: You can accept **multiple quests** simultaneously before running the script. The script will automatically spoof and complete *all* accepted quests in parallel, saving you a ton of time!
+
+---
+
+## 🛠️ How to Use
+
+1. **Accept Quests:** Go to your **Quests** tab in Discord and accept one or multiple quests.
+2. **Open DevTools:** Press `Ctrl+Shift+I` to open the Developer Tools. *(If it doesn't open, see the FAQ below).*
+3. **Navigate to Console:** Click on the **Console** tab at the top of the DevTools window.
+4. **Paste and Execute:** Copy the code below, paste it into the console, and press `Enter`. *(If Discord warns you about pasting code, you may need to firmly type `allow pasting` and hit enter first!)*
 
 <details>
-<summary>Click to expand</summary>
+<summary><b>🔥 Click here to expand the Quest Completer Code</b></summary>
 
-```js
+```javascript
 delete window.$;
 let wpRequire = webpackChunkdiscord_app.push([[Symbol()], {}, r => r]);
 webpackChunkdiscord_app.pop();
@@ -187,49 +202,40 @@ if (quests.length === 0) {
     }
 }
 ```
-
 </details>
 
-(If you're unable to paste into the console, you might have to type `allow pasting` and hit enter first)
+## 🚦 What Happens Next?
+Depending on your quests, the script will guide you:
+- **Play/Watch Quests:** Sit back and relax. The script spoofs the game/video and completes it automatically.
+- **Stream Quests:** Join a Voice Channel with at least one friend (or an alt account) and stream *any* window. The script handles the rest!
 
-5. Follow the printed instructions depending on what type of quest you have:
-   - If your quest says to **play** the game or **watch a video**, you can just wait and do nothing
-   - If your quest says to **stream** the game, join a VC with a friend or alt and stream any window
+You can monitor the exact progress of each quest right there in the Console! Once it says **Quest completed!**, simply go to your Quests tab and claim your reward. 🎉
 
-6. Wait for it to complete the quest. You can track progress by looking at the `[Quest] Progress:` prints in the Console tab, or by looking at the progress bar in the Quests tab.
+---
 
-7. You can now claim the reward! 🎉
+## ❓ FAQ & Troubleshooting
 
-## What's different from the original?
+<details>
+<summary><b>Nothing happens or Discord stops sending messages?</b></summary>
+This is an occasional bug when opening DevTools where Discord's network requests freeze. Restart Discord completely and try again.
+</details>
 
-The [original script by aamiaa](https://gist.github.com/aamiaa/204cd9d42013ded9faf646fae7f89fbb) uses hardcoded webpack export keys (`.Z`, `.A`, `.Bo`, etc.) that **break every Discord update**. This version uses **dynamic module resolution** — it searches all exports by method names instead of key names, so it survives updates automatically.
+<details>
+<summary><b>Can I be banned for using this?</b></summary>
+There is always a theoretical risk with client modifications or scripts, but to date, users have not been banned for claiming quests this way. Use at your own discretion.
+</details>
 
-## FAQ
+<details>
+<summary><b><code>Ctrl+Shift+I</code> isn't doing anything!</b></summary>
+Try downloading the <a href="https://discord.com/api/downloads/distributions/app/installers/latest?channel=ptb&platform=win&arch=x64">Discord PTB client</a>, which has DevTools enabled by default, or look up how to re-enable DevTools in your Discord config. Also ensure your GPU overlay (like AMD Radeon) isn't intercepting the shortcut.
+</details>
 
-**Q: Running the script does nothing besides printing "undefined", and makes chat messages not go through**
-A: This is a random bug with opening DevTools, where all HTTP requests break for a few minutes. It's not the script's fault. Either wait and try again, or restart Discord and try again.
+<details>
+<summary><b>It says "Requires desktop app" but I'm on Vesktop?</b></summary>
+Vesktop is essentially a browser wrapper and doesn't have the deep desktop integration needed. Please use the official Desktop Client.
+</details>
 
-**Q: Can I get banned for using this?**
-A: There is always a risk, though so far nobody has been banned for this or other similar things like client mods.
-
-**Q: `Ctrl+Shift+I` doesn't work**
-A: Either download the [PTB client](https://discord.com/api/downloads/distributions/app/installers/latest?channel=ptb&platform=win&arch=x64), or use [this](https://www.reddit.com/r/discordapp/comments/sc61n3/comment/hu4fw5x/) to enable DevTools on Stable.
-
-**Q: `Ctrl+Shift+I` takes a screenshot**
-A: Disable the keybind in your AMD Radeon app.
-
-**Q: I get a syntax error / unexpected token error**
-A: Make sure your browser isn't auto-translating this website before copying the script. Turn off any translator extensions and try again.
-
-**Q: I'm on Vesktop but it tells me I'm using a browser**
-A: Vesktop is not a true desktop client, it's a fancy browser wrapper. Download the actual [desktop app](https://discord.com/download) instead.
-
-**Q: I get "Module resolution failed"**
-A: Discord may have renamed internal methods. Open an [issue](../../issues) with the error details.
-
-**Q: Can I complete expired quests with this?**
-A: No, there is no way to do that.
-
-## License (GPL-3.0)
-
-Based on the [original work by aamiaa](https://gist.github.com/aamiaa/204cd9d42013ded9faf646fae7f89fbb). Licensed under [GPL-3.0](LICENSE).
+---
+<div align="center">
+  <p><i>Based on original concepts by aamiaa • Licensed under <a href="LICENSE">GPL-3.0</a></i></p>
+</div>

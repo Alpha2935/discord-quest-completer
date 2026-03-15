@@ -87,12 +87,12 @@ if (quests.length === 0) {
                     FluxDispatcher.dispatch({ type: "RUNNING_GAMES_CHANGE", removed: realGames, added: [fakeGame], games: RunningGameStore.__fakeGames__ })
 
                     let fn = data => {
+                        if (data.questId !== quest.id) return
                         let progress = quest.config.configVersion === 1 ? data.userStatus.streamProgressSeconds : Math.floor(data.userStatus.progress.PLAY_ON_DESKTOP.value)
                         console.log(`[${questName}] Quest progress: ${progress}/${secondsNeeded}`)
 
                         if (progress >= secondsNeeded) {
                             console.log(`[${questName}] Quest completed!`)
-
                             RunningGameStore.__fakeGames__ = RunningGameStore.__fakeGames__.filter(x => x.pid !== fakeGame.pid)
                             if (RunningGameStore.__fakeGames__.length === 0) {
                                 RunningGameStore.getRunningGames = RunningGameStore.__realGetRunningGames__
@@ -106,7 +106,6 @@ if (quests.length === 0) {
                         }
                     }
                     FluxDispatcher.subscribe("QUESTS_SEND_HEARTBEAT_SUCCESS", fn)
-
                     console.log(`Spoofed your game to ${applicationName}. Wait for ${Math.ceil((secondsNeeded - secondsDone) / 60)} more minutes.`)
                 })
             }
@@ -124,6 +123,7 @@ if (quests.length === 0) {
                 })
 
                 let fn = data => {
+                    if (data.questId !== quest.id) return
                     let progress = quest.config.configVersion === 1 ? data.userStatus.streamProgressSeconds : Math.floor(data.userStatus.progress.STREAM_ON_DESKTOP.value)
                     console.log(`[${questName}] Quest progress: ${progress}/${secondsNeeded}`)
 
@@ -135,7 +135,6 @@ if (quests.length === 0) {
                     }
                 }
                 FluxDispatcher.subscribe("QUESTS_SEND_HEARTBEAT_SUCCESS", fn)
-
                 console.log(`Spoofed your stream to ${applicationName}. Stream any window in vc for ${Math.ceil((secondsNeeded - secondsDone) / 60)} more minutes.`)
                 console.log("Remember that you need at least 1 other person to be in the vc!")
             }

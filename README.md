@@ -1,35 +1,47 @@
-<div align="center">
-  <h1>🎮 Discord Quest Completer</h1>
-  <p><strong>Automatically complete Discord quests seamlessly in the background!</strong></p>
-</div>
+> [!CAUTION]
+> # 🛑 EXTREME WARNING: READ BEFORE USE 🛑
+> 
+> **Some users have received the following system message:**
+> 
+> <div align="center">
+>   <img src="https://i.imgur.com/YourImageLinkHere.png" alt="Quest Access Suspended" width="600">
+>   <p><em>"Hey, we continue to notice unusual Quest activity on your account... Your access to Quests has been suspended until [Date]."</em></p>
+> </div>
+> 
+> **There isn't much I can do to make the script undetected, so use it at your own risk, as you WILL get flagged by doing so.**
+> 
+> Discord's anti-cheat systems are continuously monitoring for unusual patterns. While this script mimics realistic client behavior to stay under the radar, it is a violation of Discord's Inauthentic Engagement policy. If you value your account's ability to earn future quest rewards, **do not use this tool**. 
 
 ---
+
+# 🎮 Discord Quest Completer
+
+**Automatically complete Discord quests seamlessly in the background!**
+
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://opensource.org/licenses/GPL-3.0)
 
 ### ✨ Features
-- **🚀 Concurrent Questing**: Accept multiple quests at the same time, and this script will complete them **all at once** in the background!
-- **🛡️ Undetected & Safe**: Mimics realistic client behavior directly from within your client. 
-- **⚡ Auto-Resolution**: Automatically finds the necessary internal Discord modules, immune to property key updates.
-- **💻 Desktop App Native**: Fully works within the standalone Discord Desktop app!
 
----
+*   **🚀 Concurrent Questing:** Accept multiple quests at the same time, and this script will complete them **all at once** in parallel! No more waiting for one quest to finish before starting the next.
+*   **🛡️ Update-Proof:** Dynamically resolves Discord's internal Webpack modules. It won't break just because Discord shuffles a property key.
+*   **💻 Desktop App Native:** Fully optimized for the standalone Discord Desktop app. 
+*   **⚡ Auto-Resolution:** Automatically finds the necessary internal stores, meaning less manual maintenance for you.
 
-> [!NOTE]  
-> This script is designed for the **[Discord Desktop App](https://discord.com/download)**. It relies on internal stores that are unavailable in the browser version for game-related quests.
-
-> [!TIP]  
-> Remember: You can accept **multiple quests** simultaneously before running the script. The script will automatically spoof and complete *all* accepted quests in parallel, saving you a ton of time!
+> **Note:** This script is designed for the **Discord Desktop App**. It relies on internal stores that are unavailable in the browser version for game-related quests. Vesktop and browser wrappers will not work for `PLAY_ON_DESKTOP` or `STREAM_ON_DESKTOP` tasks.
 
 ---
 
 ## 🛠️ How to Use
 
-1. **Accept Quests:** Go to your **Quests** tab in Discord and accept one or multiple quests.
-2. **Open DevTools:** Press `Ctrl+Shift+I` to open the Developer Tools. *(If it doesn't open, see the FAQ below).*
-3. **Navigate to Console:** Click on the **Console** tab at the top of the DevTools window.
-4. **Paste and Execute:** Copy the code below, paste it into the console, and press `Enter`. *(If Discord warns you about pasting code, you may need to firmly type `allow pasting` and hit enter first!)*
+1.  **Accept Quests:** Go to your **Quests** tab in Discord and accept one or multiple quests. *(You can accept all available quests at once!)*
+2.  **Open DevTools:** Press `Ctrl+Shift+I` to open the Developer Tools. 
+    *(If it doesn't open, see the FAQ below).*
+3.  **Navigate to Console:** Click on the **Console** tab at the top of the DevTools window.
+4.  **Paste and Execute:** Copy the code block below, paste it into the console, and press `Enter`. 
+    *(If Discord warns you about pasting code, you may need to firmly type `allow pasting` and hit enter first!)*
 
 <details>
-<summary><b>🔥 Click here to expand the Quest Completer Code</b></summary>
+<summary><strong>🔥 Click here to expand the Quest Completer Code</strong></summary>
 
 ```javascript
 delete window.$;
@@ -53,7 +65,7 @@ if (quests.length === 0) {
 } else {
     console.log(`Starting ${quests.length} quest(s) in parallel...`);
 
-    // Changed from doJob() queue to forEach() parallel execution
+    // Parallel execution of all accepted quests
     quests.forEach(quest => {
         try {
             const pid = Math.floor(Math.random() * 30000) + 1000;
@@ -61,7 +73,7 @@ if (quests.length === 0) {
             const taskConfig = quest.config.taskConfig ?? quest.config.taskConfigV2;
             const taskName = supportedTasks.find(x => taskConfig.tasks[x] != null);
             const taskData = taskConfig.tasks[taskName];
-            
+
             // Safely extract application ID
             const applicationId = quest.config.application?.id ?? taskData.applications?.[0]?.id;
             const secondsNeeded = taskData.target;
@@ -100,9 +112,9 @@ if (quests.length === 0) {
                     api.get({url: `/applications/public?application_ids=${applicationId}`}).then(res => {
                         const appData = res.body?.[0];
                         if (!appData) return console.log(`[${questName}] Failed to fetch app data.`);
-                        
+
                         const exeName = appData.executables?.find(x => x.os === "win32")?.name?.replace(">", "") ?? appData.name.replace(/[\/\\:*?"<>|]/g, "");
-                        
+
                         const fakeGame = {
                             cmdLine: `C:\\Program Files\\${appData.name}\\${exeName}`,
                             exeName,
@@ -116,21 +128,21 @@ if (quests.length === 0) {
                             processName: appData.name,
                             start: Date.now(),
                         };
-                        
+
                         const realGames = RunningGameStore.getRunningGames();
                         const fakeGames = [fakeGame];
                         const realGetRunningGames = RunningGameStore.getRunningGames;
                         const realGetGameForPID = RunningGameStore.getGameForPID;
-                        
+
                         RunningGameStore.getRunningGames = () => fakeGames;
                         RunningGameStore.getGameForPID = (pid) => fakeGames.find(x => x.pid === pid);
                         FluxDispatcher.dispatch({type: "RUNNING_GAMES_CHANGE", removed: realGames, added: [fakeGame], games: fakeGames});
-                        
+
                         let fn = data => {
                             if (data.questId !== quest.id) return;
                             let progress = quest.config.configVersion === 1 ? data.userStatus.streamProgressSeconds : Math.floor(data.userStatus.progress.PLAY_ON_DESKTOP.value);
                             console.log(`[${questName}] Quest progress: ${progress}/${secondsNeeded}`);
-                            
+
                             if (progress >= secondsNeeded) {
                                 console.log(`[${questName}] Quest completed!`);
                                 RunningGameStore.getRunningGames = realGetRunningGames;
@@ -154,12 +166,12 @@ if (quests.length === 0) {
                         pid,
                         sourceName: null
                     });
-                    
+
                     let fn = data => {
                         if (data.questId !== quest.id) return;
                         let progress = quest.config.configVersion === 1 ? data.userStatus.streamProgressSeconds : Math.floor(data.userStatus.progress.STREAM_ON_DESKTOP.value);
                         console.log(`[${questName}] Quest progress: ${progress}/${secondsNeeded}`);
-                        
+
                         if (progress >= secondsNeeded) {
                             console.log(`[${questName}] Quest completed!`);
                             ApplicationStreamingStore.getStreamerActiveStreamMetadata = realFunc;
@@ -167,7 +179,7 @@ if (quests.length === 0) {
                         }
                     };
                     FluxDispatcher.subscribe("QUESTS_SEND_HEARTBEAT_SUCCESS", fn);
-                    
+
                     console.log(`Spoofed your stream to the target game. Stream any window in vc for ${Math.ceil((secondsNeeded - secondsDone) / 60)} more minutes.`);
                     console.log("Remember that you need at least 1 other person to be in the vc!");
                 }
@@ -175,16 +187,16 @@ if (quests.length === 0) {
             } else if (taskName === "PLAY_ACTIVITY") {
                 let channelId = ChannelStore.getSortedPrivateChannels()[0]?.id ?? Object.values(GuildChannelStore.getAllGuilds()).find(x => x != null && x.VOCAL.length > 0)?.VOCAL[0]?.channel.id;
                 if (!channelId) return console.log(`[${questName}] Could not find a voice channel.`);
-                
+
                 const streamKey = `call:${channelId}:1`;
-                
+
                 let fn = async () => {
                     console.log(`[${questName}] Starting quest...`);
                     while (true) {
                         const res = await api.post({url: `/quests/${quest.id}/heartbeat`, body: {stream_key: streamKey, terminal: false}});
                         const progress = res.body?.progress?.PLAY_ACTIVITY?.value ?? 0;
                         console.log(`[${questName}] Quest progress: ${progress}/${secondsNeeded}`);
-                        
+
                         if (progress >= secondsNeeded) {
                             await api.post({url: `/quests/${quest.id}/heartbeat`, body: {stream_key: streamKey, terminal: true}});
                             break;
@@ -200,41 +212,3 @@ if (quests.length === 0) {
         }
     });
 }
-```
-</details>
-
-## 🚦 What Happens Next?
-Depending on your quests, the script will guide you:
-- **Play/Watch Quests:** Sit back and relax. The script spoofs the game/video and completes it automatically.
-- **Stream Quests:** Join a Voice Channel with at least one friend (or an alt account) and stream *any* window. The script handles the rest!
-
-You can monitor the exact progress of each quest right there in the Console! Once it says **Quest completed!**, simply go to your Quests tab and claim your reward. 🎉
-
----
-
-## ❓ FAQ & Troubleshooting
-
-<details>
-<summary><b>Nothing happens or Discord stops sending messages?</b></summary>
-This is an occasional bug when opening DevTools where Discord's network requests freeze. Restart Discord completely and try again.
-</details>
-
-<details>
-<summary><b>Can I be banned for using this?</b></summary>
-There is always a theoretical risk with client modifications or scripts, but to date, users have not been banned for claiming quests this way. Use at your own discretion.
-</details>
-
-<details>
-<summary><b><code>Ctrl+Shift+I</code> isn't doing anything!</b></summary>
-Try downloading the <a href="https://discord.com/api/downloads/distributions/app/installers/latest?channel=ptb&platform=win&arch=x64">Discord PTB client</a>, which has DevTools enabled by default, or look up how to re-enable DevTools in your Discord config. Also ensure your GPU overlay (like AMD Radeon) isn't intercepting the shortcut.
-</details>
-
-<details>
-<summary><b>It says "Requires desktop app" but I'm on Vesktop?</b></summary>
-Vesktop is essentially a browser wrapper and doesn't have the deep desktop integration needed. Please use the official Desktop Client.
-</details>
-
----
-<div align="center">
-  <p><i>Based on original concepts by aamiaa • Licensed under <a href="LICENSE">GPL-3.0</a></i></p>
-</div>

@@ -4,7 +4,7 @@
 > **Some users have received the following system message:**
 > 
 > <div align="center">
->   <img src="https://i.imgur.com/YourImageLinkHere.png" alt="Quest Access Suspended" width="600">
+>   <img src="[https://i.imgur.com/YourImageLinkHere.png" alt="Quest Access Suspended](https://media.discordapp.net/attachments/1432090632868073642/1553691430046928916/641866022-98474d24-3985-4986-b0f3-09fa254f4cf6.png?ex=6aba2b67&is=6ab8d9e7&hm=8e9eaeb7b8c28609dc5d005193765bcdc23da52522a6462da82b3274302bf9c6&=&format=webp&quality=lossless)" width="600">
 >   <p><em>"Hey, we continue to notice unusual Quest activity on your account... Your access to Quests has been suspended until [Date]."</em></p>
 > </div>
 > 
